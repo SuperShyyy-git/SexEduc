@@ -10,3 +10,8 @@ python manage.py collectstatic --no-input
 
 # Run migrations
 python manage.py migrate
+
+# Create admin user if environment variables are set
+if [ ! -z "$ADMIN_USERNAME" ]; then
+    python create_admin.py
+fi
