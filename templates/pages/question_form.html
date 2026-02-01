@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Sex Education System{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 3rem 0;">
+    <div class="form-page">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" style="margin-bottom: 2rem; font-size: 0.875rem; color: #6B7280;">
+            <a href="{% url 'home' %}" style="color: #6366F1;">Home</a>
+            <span style="margin: 0 0.5rem;">/</span>
+            <a href="{% url 'quizzes:list' %}" style="color: #6366F1;">Quizzes</a>
+            <span style="margin: 0 0.5rem;">/</span>
+            <a href="{% url 'quizzes:edit_quiz' quiz.id %}" style="color: #6366F1;">{{ quiz.title }}</a>
+            <span style="margin: 0 0.5rem;">/</span>
+            <span>{{ title }}</span>
+        </nav>
+
+        <!-- Form Card -->
+        <div class="card" style="max-width: 900px; margin: 0 auto;">
+            <div class="form-header">
+                <h1 class="form-title">{{ title }}</h1>
+                <p class="form-description"
+                    style="background: linear-gradient(135deg, #6366F1, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 600;">
+                    Quiz: {{ quiz.title }}
+                </p>
+            </div>
+
+            <form method="post" class="form-body">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-error"
+                    style="margin-bottom: 1.5rem; padding: 1rem; background: #FEE2E2; border: 1px solid #F87171; border-radius: 0.5rem; color: #991B1B;">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- Question Text -->
+                <div class="input-group">
+                    <label for="{{ form.text.id_for_label }}" class="input-label">
+                        {{ form.text.label }} <span style="color: #EF4444;">*</span>
+                    </label>
+                    {{ form.text }}
+                    {% if form.text.errors %}
+                    <span class="input-error">{{ form.text.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Question Order -->
+                <div class="input-group">
+                    <label for="{{ form.order.id_for_label }}" class="input-label">
+                        {{ form.order.label }}
+                    </label>
+                    {{ form.order }}
+                    {% if form.order.errors %}
+                    <span class="input-error">{{ form.order.errors.0 }}</span>
+                    {% endif %}
+                    <p class="input-hint">Order in which this question appears</p>
+                </div>
+
+                <!-- Hidden Quiz Field -->
+                {{ form.quiz }}
+
+                <!-- Answers Formset -->
+                <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e5e7eb;">
+                    <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: #111827;">Answer
+                        Options
+                    </h2>
+
+                    {% if formset.non_form_errors %}
+                    <div class="alert alert-error"
+                        style="margin-bottom: 1.5rem; padding: 1rem; background: #FEE2E2; border: 1px solid #F87171; border-radius: 0.5rem; color: #991B1B;">
+                        {{ formset.non_form_errors }}
+                    </div>
+                    {% endif %}
+
+                    {{ formset.management_form }}
+
+                    <div class="answer-formset" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        {% for answer_form in formset %}
+                        <div class="answer-item-card"
+                            style="padding: 1.5rem; background: #f9fafb; border-radius: 0.75rem; border: 1px solid #e5e7eb; transition: all 0.3s ease;">
+                            <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
+                                <!-- Hidden primary key field for existing answers -->
+                                {{ answer_form.id }}
+
+                                <div style="flex: 1;">
+                                    <label class="input-label"
+                                        style="margin-bottom: 0.5rem; display: block; font-weight: 600; color: #374151;">
+                                        Option #{{ forloop.counter }}
+                                    </label>
+                                    {{ answer_form.text }}
+                                    {% if answer_form.text.errors %}
+                                    <span class="input-error"
+                                        style="color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; display: block;">{{
+                                        answer_form.text.errors.0 }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <div
+                                    style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding-top: 1.75rem;">
+                                    <label class="checkbox-container"
+                                        style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                        {{ answer_form.is_correct }}
+                                        <span
+                                            style="font-size: 0.875rem; font-weight: 600; color: #059669;">Correct?</span>
+                                    </label>
+                                    {% if formset.can_delete %}
+                                    <div style="margin-top: 0.5rem;">
+                                        <label
+                                            style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #ef4444; font-size: 0.75rem;">
+                                            {{ answer_form.DELETE }}
+                                            <span>Delete</span>
+                                        </label>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e5e7eb;">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        {{ submit_text }}
+                    </button>
+                    <a href="{% url 'quizzes:edit_quiz' quiz.id %}" class="btn btn-outline btn-lg">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-page {
+        animation: fadeIn 0.5s ease;
+    }
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .answer-item-card:hover {
+        background: white !important;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+        border-color: #6366F1 !important;
+        transform: translateY(-2px);
+    }
+
+    .answer-item-card input:focus {
+        border-color: #6366F1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        outline: none;
+    }
+
+    .checkbox-container input {
+        width: 1.25rem;
+        height: 1.25rem;
+        accent-color: #10B981;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Sex Education System{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="container">
+        <div class="form">
+            <div class="form-header">
+                <h2>Create Your Account</h2>
+                <p>Join our community and start learning</p>
+            </div>
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.first_name.id_for_label }}" class="input-label">First Name</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                        <span class="input-error-message">{{ form.first_name.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.last_name.id_for_label }}" class="input-label">Last Name</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                        <span class="input-error-message">{{ form.last_name.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}" class="input-label">Username</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                    <span class="input-error-message">{{ form.username.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}" class="input-label">Email</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <span class="input-error-message">{{ form.email.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password1.id_for_label }}" class="input-label">Password</label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}
+                    <span class="input-error-message">{{ form.password1.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password2.id_for_label }}" class="input-label">Confirm Password</label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}
+                    <span class="input-error-message">{{ form.password2.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </div>
+            </form>
+
+            <div style="text-align: center; margin-top: 1rem;">
+                <p>Already have an account? <a href="{% url 'accounts:login' %}"
+                        style="color: #667eea; text-decoration: none;">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .auth-page {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, #667eea22 0%, #764ba222 100%);
+        padding: 2rem 0;
+    }
+
+    .alert {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 0.5rem;
+    }
+
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .alert-error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+</style>
+{% endblock %}

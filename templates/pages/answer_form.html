@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Sex Education System{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 3rem 0;">
+    <div class="form-page">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" style="margin-bottom: 2rem; font-size: 0.875rem; color: #6B7280;">
+            <a href="{% url 'home' %}" style="color: #6366F1;">Home</a>
+            <span style="margin: 0 0.5rem;">/</span>
+            <a href="{% url 'quizzes:list' %}" style="color: #6366F1;">Quizzes</a>
+            <span style="margin: 0 0.5rem;">/</span>
+            <a href="{% url 'quizzes:edit_question' question.id %}" style="color: #6366F1;">Question</a>
+            <span style="margin: 0 0.5rem;">/</span>
+            <span>{{ title }}</span>
+        </nav>
+
+        <!-- Form Card -->
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <div class="form-header">
+                <h1 class="form-title">{{ title }}</h1>
+                <p class="form-description">{{ question.text|truncatewords:10 }}</p>
+            </div>
+
+            <form method="post" class="form-body">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-error"
+                    style="margin-bottom: 1.5rem; padding: 1rem; background: #FEE2E2; border: 1px solid #F87171; border-radius: 0.5rem; color: #991B1B;">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- Answer Text -->
+                <div class="input-group">
+                    <label for="{{ form.text.id_for_label }}" class="input-label">
+                        {{ form.text.label }} <span style="color: #EF4444;">*</span>
+                    </label>
+                    {{ form.text }}
+                    {% if form.text.errors %}
+                    <span class="input-error">{{ form.text.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Is Correct Checkbox -->
+                <div class="input-group"
+                    style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: rgba(99, 102, 241, 0.05); border-radius: 0.75rem;">
+                    {{ form.is_correct }}
+                    <label for="{{ form.is_correct.id_for_label }}" class="input-label" style="margin: 0;">
+                        {{ form.is_correct.label }}
+                    </label>
+                </div>
+
+                <!-- Hidden Question Field -->
+                {{ form.question }}
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        {{ submit_text }}
+                    </button>
+                    <a href="{% url 'quizzes:edit_question' question.id %}" class="btn btn-outline btn-lg">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-page {
+        animation: fadeIn 0.5s ease;
+    }
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}

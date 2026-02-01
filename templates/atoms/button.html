@@ -1,0 +1,5 @@
+<!-- Button Atom Component -->
+<button class="btn {{ button_class|default:'btn-primary' }}" type="{{ button_type|default:'button' }}" {% if button_id
+    %}id="{{ button_id }}" {% endif %} {% if button_onclick %}onclick="{{ button_onclick }}" {% endif %}>
+    {{ button_text|default:'Click Me' }}
+</button>

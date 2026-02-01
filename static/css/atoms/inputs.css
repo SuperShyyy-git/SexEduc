@@ -1,0 +1,177 @@
+/* Modern Input Styles */
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    transition: color 200ms ease;
+}
+
+.input-field {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-size: 1rem;
+    font-family: var(--font-body, -apple-system, sans-serif);
+    color: #1F2937;
+    background: white;
+    border: 2px solid #E5E7EB;
+    border-radius: 0.75rem;
+    transition: all 200ms ease;
+    outline: none;
+}
+
+.input-field:focus {
+    border-color: #6366F1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    transform: translateY(-1px);
+}
+
+.input-field:focus+.input-label,
+.input-group:focus-within .input-label {
+    color: #6366F1;
+}
+
+.input-field::placeholder {
+    color: #9CA3AF;
+}
+
+/* Floating Label Style */
+.input-floating {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.input-floating .input-field {
+    padding: 1.25rem 1rem 0.5rem;
+}
+
+.input-floating .input-label {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    padding: 0 0.25rem;
+    pointer-events: none;
+    transition: all 200ms ease;
+}
+
+.input-floating .input-field:focus~.input-label,
+.input-floating .input-field:not(:placeholder-shown)~.input-label {
+    top: 0;
+    font-size: 0.75rem;
+    transform: translateY(0);
+    color: #6366F1;
+}
+
+/* Input with Icon */
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon .input-field {
+    padding-left: 3rem;
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9CA3AF;
+    transition: color 200ms ease;
+}
+
+.input-with-icon .input-field:focus~.input-icon {
+    color: #6366F1;
+}
+
+/* Validation States */
+.input-field.is-valid {
+    border-color: #10B981;
+}
+
+.input-field.is-valid:focus {
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.input-field.is-invalid {
+    border-color: #EF4444;
+}
+
+.input-field.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.input-hint {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: #6B7280;
+}
+
+.input-error {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: #EF4444;
+    font-weight: 500;
+}
+
+.input-error::before {
+    content: '⚠';
+}
+
+.input-success {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: #10B981;
+    font-weight: 500;
+}
+
+.input-success::before {
+    content: '✓';
+}
+
+/* Select Styling */
+select.input-field {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5rem;
+    padding-right: 3rem;
+}
+
+/* Textarea */
+textarea.input-field {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Checkbox and Radio */
+.input-checkbox,
+.input-radio {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.5rem;
+    cursor: pointer;
+    accent-color: #6366F1;
+}
+
+/* Disabled State */
+.input-field:disabled {
+    background-color: #F9FAFB;
+    cursor: not-allowed;
+    opacity: 0.6;
+}

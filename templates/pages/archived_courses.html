@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Archived Courses - Sex Education System{% endblock %}
+
+{% block content %}
+<div class="courses-page">
+    <div class="container">
+        <div class="page-header">
+            <h1>📦 Archived Courses</h1>
+            <p>Courses that have been archived by administrators</p>
+            <a href="{% url 'courses:list' %}" class="btn btn-secondary">← Back to Active Courses</a>
+        </div>
+
+        <div class="card-grid">
+            {% for course in courses %}
+            <div class="card archived-card">
+                {% if course.image %}
+                <img src="{{ course.image.url }}" alt="{{ course.title }}" class="card-image">
+                {% endif %}
+                <div class="card-body">
+                    <span class="difficulty-badge difficulty-{{ course.difficulty }}">{{ course.get_difficulty_display }}</span>
+                    <span class="archived-badge">Archived</span>
+                    <h3 class="card-title">{{ course.title }}</h3>
+                    <p class="card-text">{{ course.description|truncatewords:25 }}</p>
+                    <div class="course-meta">
+                        <span>📚 {{ course.lesson_count }} lesson{{ course.lesson_count|pluralize }}</span>
+                        <span>👥 {{ course.enrolled_count }} enrolled</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'courses:detail' course.id %}" class="btn btn-secondary">View</a>
+                    <a href="{% url 'courses:restore' course.id %}" class="btn btn-primary">Restore</a>
+                    <a href="{% url 'courses:delete' course.id %}" class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <p>No archived courses.</p>
+                <a href="{% url 'courses:list' %}" class="btn btn-primary">View Active Courses</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .courses-page {
+        padding: 2rem 0;
+        background: #f8f9fa;
+        min-height: 80vh;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .page-header .btn {
+        margin-top: 1rem;
+    }
+
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .archived-card {
+        opacity: 0.8;
+        border: 2px dashed #6c757d;
+    }
+
+    .archived-badge {
+        background: #6c757d;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        margin-left: 0.5rem;
+    }
+
+    .card-footer {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        grid-column: 1 / -1;
+    }
+</style>
+{% endblock %}

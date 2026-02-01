@@ -1,0 +1,392 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}{{ course.title }} - Sex Education System{% endblock %}
+
+{% block content %}
+
+<div class="course-detail-page">
+
+    <div class="container">
+
+        <div class="course-header">
+
+            {% if course.image %}
+
+            <div class="course-image">
+
+                <img src="{{ course.image.url }}" alt="{{ course.title }}">
+
+            </div>
+
+            {% endif %}
+
+            <div class="course-info">
+                <span class="difficulty-badge difficulty-{{ course.difficulty }}">{{ course.get_difficulty_display }}</span>
+                <h1>{{ course.title }}</h1>
+
+                <p>{{ course.description }}</p>
+
+                <div class="course-stats">
+
+                    <span>📚 {{ course.lesson_count }} lesson{{ course.lesson_count|pluralize }}</span>
+
+                    <span>👥 {{ course.enrolled_count }} enrolled</span>
+
+                </div>
+
+                {% if progress %}
+
+                <div class="progress-section">
+
+                    <div class="progress-bar" style="--progress: {{ progress.progress_percentage|default:0 }}%;">
+
+                        <div class="progress-fill" style="width: var(--progress);"></div>
+
+                    </div>
+
+                    <p>{{ progress.progress_percentage|default:0 }}% Complete</p>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="lessons-section">
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+
+                <h2>Course Lessons</h2>
+
+                {% if user.is_staff %}
+
+                <div class="management-actions">
+                    <a href="{% url 'courses:create_lesson_for_course' course.id %}" class="btn btn-success">+ Add
+                        Lesson</a>
+                    <a href="{% url 'courses:edit' course.id %}" class="btn btn-secondary">Edit Course</a>
+                    {% if course.is_archived %}
+                    <a href="{% url 'courses:restore' course.id %}" class="btn btn-primary">Restore Course</a>
+                    {% else %}
+                    <a href="{% url 'courses:archive' course.id %}" class="btn btn-warning">Archive Course</a>
+                    {% endif %}
+                    <a href="{% url 'courses:delete' course.id %}" class="btn btn-danger">Delete Course</a>
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="lessons-list">
+                {% for lesson in lessons %}
+                <div class="lesson-item">
+                    <div class="lesson-info">
+                        <div class="lesson-number">{{ forloop.counter }}</div>
+                        <div>
+                            <h3>{{ lesson.title }}</h3>
+                            <p>{{ lesson.duration_minutes }} minutes</p>
+                        </div>
+                    </div>
+                    <div class="lesson-actions">
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'courses:lesson' course.id lesson.id %}" class="btn btn-primary">Start</a>
+                        {% endif %}
+                        {% if user.is_staff %}
+                        <a href="{% url 'courses:edit_lesson' lesson.id %}" class="btn btn-secondary btn-sm">✏️</a>
+                        <a href="{% url 'courses:delete_lesson' lesson.id %}" class="btn btn-danger btn-sm">🗑️</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <p>No lessons available yet.</p>
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    .course-detail-page {
+
+        padding: 2rem 0;
+
+        background: #f8f9fa;
+
+        min-height: 80vh;
+
+    }
+
+    .course-header {
+
+        background: white;
+
+        border-radius: 1rem;
+
+        padding: 2rem;
+
+        margin-bottom: 2rem;
+
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+        display: grid;
+
+        grid-template-columns: 300px 1fr;
+
+        gap: 2rem;
+
+    }
+
+    .course-image img {
+
+        width: 100%;
+
+        border-radius: 0.5rem;
+
+    }
+
+    .course-info h1 {
+
+        margin: 0.5rem 0 1rem;
+
+        font-size: 2rem;
+
+        color: #333;
+
+    }
+
+    .course-stats {
+
+        display: flex;
+
+        gap: 1.5rem;
+
+        margin: 1rem 0;
+
+        color: #6c757d;
+
+    }
+
+    .progress-section {
+
+        margin-top: 1.5rem;
+
+    }
+
+    .progress-bar {
+
+        width: 100%;
+
+        height: 12px;
+
+        background: #e0e0e0;
+
+        border-radius: 6px;
+
+        overflow: hidden;
+
+        margin-bottom: 0.5rem;
+
+    }
+
+    .progress-fill {
+
+        height: 100%;
+
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        transition: width 0.3s ease;
+
+    }
+
+    .lessons-section {
+
+        background: white;
+
+        border-radius: 1rem;
+
+        padding: 2rem;
+
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    }
+
+    .lessons-section h2 {
+
+        margin-bottom: 1.5rem;
+
+        color: #333;
+
+    }
+
+    .lessons-list {
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 1rem;
+
+    }
+
+    .lesson-item {
+
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        padding: 1.5rem;
+
+        background: #f8f9fa;
+
+        border-radius: 0.5rem;
+
+        border-left: 4px solid #e0e0e0;
+
+    }
+
+    .lesson-item.completed {
+
+        border-left-color: #28a745;
+
+        background: #d4edda22;
+
+    }
+
+    .lesson-info {
+
+        display: flex;
+
+        gap: 1rem;
+
+        align-items: center;
+
+    }
+
+    .lesson-number {
+
+        width: 40px;
+
+        height: 40px;
+
+        border-radius: 50%;
+
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        color: white;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-weight: 700;
+
+    }
+
+    .lesson-item h3 {
+
+        margin: 0;
+
+        color: #333;
+
+    }
+
+    .lesson-item p {
+
+        margin: 0.25rem 0 0 0;
+
+        font-size: 0.875rem;
+
+        color: #6c757d;
+
+    }
+
+    .lesson-actions {
+
+        display: flex;
+
+        gap: 1rem;
+
+        align-items: center;
+
+    }
+
+    .status-badge {
+
+        padding: 0.5rem 1rem;
+
+        border-radius: 0.5rem;
+
+        font-weight: 600;
+
+        font-size: 0.875rem;
+
+    }
+
+    .status-badge.completed {
+
+        background: #d4edda;
+
+        color: #155724;
+
+    }
+
+    .difficulty-badge {
+
+        display: inline-block;
+
+        padding: 0.25rem 0.75rem;
+
+        border-radius: 1rem;
+
+        font-size: 0.75rem;
+
+        font-weight: 600;
+
+        text-transform: uppercase;
+
+    }
+
+    .difficulty-beginner {
+
+        background: #d4edda;
+
+        color: #155724;
+
+    }
+
+    .difficulty-intermediate {
+
+        background: #fff3cd;
+
+        color: #856404;
+
+    }
+
+    .difficulty-advanced {
+
+        background: #f8d7da;
+
+        color: #721c24;
+
+    }
+
+    @media (max-width: 768px) {
+
+        .course-header {
+
+            grid-template-columns: 1fr;
+
+        }
+
+    }
+</style>
+
+{% endblock %}

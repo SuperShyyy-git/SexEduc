@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+
+{% block title %}Courses - Sex Education System{% endblock %}
+
+{% block content %}
+<div class="courses-page">
+    <div class="container">
+        <div class="page-header">
+            <div class="header-content">
+                <h1>Available Courses</h1>
+                <p>Explore our comprehensive sex education courses taught by certified professionals</p>
+            </div>
+            {% if user.is_staff %}
+            <div class="header-actions">
+                <a href="{% url 'courses:create' %}" class="btn btn-primary">
+                    <span>➕</span> Create Course
+                </a>
+                <a href="{% url 'courses:archived' %}" class="btn btn-outline">
+                    <span>📦</span> Archived Courses
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if courses %}
+        <div class="card-grid">
+            {% for course in courses %}
+            <div class="course-card card hover-lift">
+                {% if course.image %}
+                <div class="card-image-wrapper">
+                    <img src="{{ course.image.url }}" alt="{{ course.title }}" class="card-image">
+                    <div class="difficulty-badge difficulty-{{ course.difficulty }}">
+                        {{ course.get_difficulty_display }}
+                    </div>
+                </div>
+                {% else %}
+                <div class="card-image-wrapper card-placeholder">
+                    <div class="placeholder-icon">📚</div>
+                    <div class="difficulty-badge difficulty-{{ course.difficulty }}">
+                        {{ course.get_difficulty_display }}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="card-body">
+                    <h3 class="card-title">{{ course.title }}</h3>
+                    <p class="card-text">{{ course.description|truncatewords:25 }}</p>
+                    
+                    <div class="course-meta">
+                        <span class="meta-item">
+                            <span class="meta-icon">📖</span>
+                            {{ course.lesson_count }} lesson{{ course.lesson_count|pluralize }}
+                        </span>
+                        <span class="meta-item">
+                            <span class="meta-icon">👥</span>
+                            {{ course.enrolled_count }} enrolled
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <a href="{% url 'courses:detail' course.id %}" class="btn btn-primary w-full">
+                        View Course
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📚</div>
+            <h3>No Courses Available Yet</h3>
+            <p>Check back soon for new educational content!</p>
+            {% if user.is_staff %}
+            <a href="{% url 'courses:create' %}" class="btn btn-primary">Create First Course</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .courses-page {
+        padding: 3rem 0;
+        background: var(--gray-50);
+        min-height: 80vh;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 3rem;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .header-content h1 {
+        font-size: 2.5rem;
+        color: var(--gray-900);
+        margin-bottom: 0.5rem;
+    }
+
+    .header-content p {
+        font-size: 1.125rem;
+        color: var(--gray-600);
+        margin-bottom: 0;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .header-actions .btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+    }
+
+    .course-card {
+        background: white;
+        border-radius: 1rem;
+        overflow: hidden;
+        border: 1px solid var(--gray-200);
+        transition: all 300ms ease;
+    }
+
+    .card-image-wrapper {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .card-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 300ms ease;
+    }
+
+    .course-card:hover .card-image {
+        transform: scale(1.05);
+    }
+
+    .card-placeholder {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .placeholder-icon {
+        font-size: 4rem;
+        opacity: 0.3;
+    }
+
+    .difficulty-badge {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        padding: 0.375rem 0.875rem;
+        border-radius: 2rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .difficulty-beginner {
+        background: rgba(16, 185, 129, 0.9);
+        color: white;
+    }
+
+    .difficulty-intermediate {
+        background: rgba(245, 158, 11, 0.9);
+        color: white;
+    }
+
+    .difficulty-advanced {
+        background: rgba(239, 68, 68, 0.9);
+        color: white;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .card-title {
+        font-size: 1.375rem;
+        margin-bottom: 0.75rem;
+        color: var(--gray-900);
+        line-height: 1.3;
+    }
+
+    .card-text {
+        color: var(--gray-600);
+        line-height: 1.6;
+        margin-bottom: 1.25rem;
+    }
+
+    .course-meta {
+        display: flex;
+        gap: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--gray-100);
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--gray-600);
+        font-weight: 500;
+    }
+
+    .meta-icon {
+        font-size: 1.125rem;
+    }
+
+    .card-footer {
+        padding: 1rem 1.5rem 1.5rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 1.5rem;
+        border: 2px dashed var(--gray-300);
+    }
+
+    .empty-icon {
+        font-size: 5rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.5;
+    }
+
+    .empty-state h3 {
+        font-size: 1.75rem;
+        color: var(--gray-900);
+        margin-bottom: 0.75rem;
+    }
+
+    .empty-state p {
+        font-size: 1.125rem;
+        color: var(--gray-600);
+        margin-bottom: 2rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .courses-page {
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            flex-direction: column;
+        }
+
+        .header-content h1 {
+            font-size: 2rem;
+        }
+
+        .card-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .course-meta {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+    }
+</style>
+{% endblock %}

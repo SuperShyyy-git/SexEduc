@@ -1,0 +1,71 @@
+<header class="header" role="banner">
+    <div class="header-container">
+        <a href="/" class="header-logo">
+            <span class="logo-icon">🎓</span>
+            <span class="logo-text">Sex Education System</span>
+        </a>
+
+        <div class="header-actions">
+            {% if user.is_authenticated %}
+            <div class="header-user-menu">
+                <button class="user-menu-toggle" aria-label="User menu" aria-haspopup="true">
+                    <div class="header-avatar">
+                        {{ user.username|first|upper }}
+                    </div>
+                    <span class="header-username hide-mobile">{{ user.username }}</span>
+                    <span class="dropdown-arrow">▼</span>
+                </button>
+                <div class="user-dropdown" role="menu">
+                    <a href="{% url 'accounts:dashboard' %}" class="dropdown-item" role="menuitem">
+                        <span>📊</span> My Dashboard
+                    </a>
+                    <a href="{% url 'accounts:profile' %}" class="dropdown-item" role="menuitem">
+                        <span>👤</span> Profile Settings
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="{% url 'accounts:logout' %}" class="dropdown-item" role="menuitem">
+                        <span>🚪</span> Logout
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <a href="{% url 'accounts:login' %}" class="btn btn-secondary">Login</a>
+            <a href="{% url 'accounts:register' %}" class="btn btn-primary">Register</a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<script>
+    // User dropdown menu toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.querySelector('.user-menu-toggle');
+        const dropdown = document.querySelector('.user-dropdown');
+        
+        if (menuToggle && dropdown) {
+            menuToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('active');
+                const isExpanded = dropdown.classList.contains('active');
+                menuToggle.setAttribute('aria-expanded', isExpanded);
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!menuToggle.contains(event.target) && !dropdown.contains(event.target)) {
+                    dropdown.classList.remove('active');
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // Close on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && dropdown.classList.contains('active')) {
+                    dropdown.classList.remove('active');
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                    menuToggle.focus();
+                }
+            });
+        }
+    });
+</script>

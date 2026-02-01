@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ quiz.title }} - Sex Education System{% endblock %}
+
+{% block content %}
+<div class="quiz-detail-page">
+    <div class="container">
+        <div class="quiz-header">
+            <h1>{{ quiz.title }}</h1>
+            <p>{{ quiz.description }}</p>
+            <div class="quiz-info">
+                <div class="info-item">
+                    <strong>Questions:</strong> {{ questions_count }}
+                </div>
+                <div class="info-item">
+                    <strong>Time Limit:</strong> {{ quiz.time_limit_minutes }} minutes
+                </div>
+                <div class="info-item">
+                    <strong>Passing Score:</strong> {{ quiz.passing_score }}%
+                </div>
+            </div>
+
+            {% if user.is_staff %}
+            <div class="admin-actions"
+                style="margin-top: 1.5rem; display: flex; gap: 0.75rem; border-top: 1px solid #eee; padding-top: 1.5rem;">
+                <a href="{% url 'quizzes:edit_quiz' quiz.id %}" class="btn btn-secondary">✏️ Edit Quiz</a>
+                <a href="{% url 'quizzes:delete_quiz' quiz.id %}" class="btn btn-danger">🗑️ Delete Quiz</a>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if user.is_authenticated %}
+        <div class="quiz-actions">
+            {% if user_attempts %}
+            <div class="alert alert-info"
+                style="margin-bottom: 1.5rem; padding: 1rem; background: #E0F2FE; border-radius: 0.5rem; color: #0369A1; text-align: center;">
+                <strong>Notice:</strong> You have already completed this quiz.
+            </div>
+            <a href="{% url 'quizzes:results' quiz.id user_attempts.0.id %}" class="btn btn-secondary">View Your
+                Results</a>
+            {% else %}
+            <a href="{% url 'quizzes:take' quiz.id %}" class="btn btn-primary">Start Quiz</a>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="auth-prompt">
+            <p>Please <a href="{% url 'accounts:login' %}?next={{ request.path }}">login</a> to take this quiz.</p>
+        </div>
+        {% endif %}
+
+        {% if user_attempts %}
+        <div class="attempts-section">
+            <h2>Your Previous Attempts</h2>
+            <div class="attempts-list">
+                {% for attempt in user_attempts %}
+                <div class="attempt-item">
+                    <div>
+                        <p><strong>Date:</strong> {{ attempt.attempted_at|date:"F d, Y - g:i A" }}</p>
+                        <p><strong>Time Taken:</strong> {{ attempt.time_taken_minutes }} minute{{
+                            attempt.time_taken_minutes|pluralize }}</p>
+                    </div>
+                    <div class="attempt-score {% if attempt.passed %}passed{% else %}failed{% endif %}">
+                        {{ attempt.score }}%
+                    </div>
+                    <a href="{% url 'quizzes:results' quiz.id attempt.id %}" class="btn btn-secondary">View Results</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .quiz-detail-page {
+        padding: 2rem 0;
+        background: #f8f9fa;
+        min-height: 80vh;
+    }
+
+    .quiz-header {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .quiz-header h1 {
+        margin-bottom: 1rem;
+        color: #333;
+    }
+
+    .quiz-info {
+        display: flex;
+        gap: 2rem;
+        margin-top: 1.5rem;
+    }
+
+    .info-item {
+        font-size: 1rem;
+    }
+
+    .quiz-actions {
+        text-align: center;
+        margin: 2rem 0;
+    }
+
+    .attempts-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        margin-top: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .attempts-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .attempt-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 0.5rem;
+    }
+
+    .attempt-score {
+        font-size: 1.5rem;
+        font-weight: 700;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+    }
+
+    .attempt-score.passed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .attempt-score.failed {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .auth-prompt {
+        text-align: center;
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+    }
+</style>
+{% endblock %}

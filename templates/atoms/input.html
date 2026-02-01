@@ -1,0 +1,19 @@
+<!-- Input Atom Component -->
+<div class="form-group">
+    {% if label %}
+    <label for="{{ input_id }}" class="input-label">{{ label }}</label>
+    {% endif %}
+
+    <input type="{{ input_type|default:'text' }}" id="{{ input_id }}" name="{{ input_name }}"
+        class="input-field {% if error %}input-error{% endif %} {% if success %}input-success{% endif %}" {% if
+        placeholder %}placeholder="{{ placeholder }}" {% endif %} {% if value %}value="{{ value }}" {% endif %} {% if
+        required %}required{% endif %}>
+
+    {% if hint %}
+    <span class="input-hint">{{ hint }}</span>
+    {% endif %}
+
+    {% if error %}
+    <span class="input-error-message">{{ error }}</span>
+    {% endif %}
+</div>

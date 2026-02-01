@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Sex Education System{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 3rem 0;">
+    <div class="form-page">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" style="margin-bottom: 2rem; font-size: 0.875rem; color: #6B7280;">
+            <a href="{% url 'home' %}" style="color: #6366F1;">Home</a>
+            <span style="margin: 0 0.5rem;">/</span>
+            <a href="{% url 'quizzes:list' %}" style="color: #6366F1;">Quizzes</a>
+            <span style="margin: 0 0.5rem;">/</span>
+            <span>{{ title }}</span>
+        </nav>
+
+        <!-- Form Card -->
+        <div class="card" style="max-width: 800px; margin: 0 auto;">
+            <div class="form-header">
+                <h1 class="form-title">{{ title }}</h1>
+                {% if quiz %}
+                <p class="form-description">Update quiz settings and manage questions.</p>
+                {% else %}
+                <p class="form-description">Create a new quiz for your course.</p>
+                {% endif %}
+            </div>
+
+            <form method="post" class="form-body">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-error"
+                    style="margin-bottom: 1.5rem; padding: 1rem; background: #FEE2E2; border: 1px solid #F87171; border-radius: 0.5rem; color: #991B1B;">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- Quiz Title -->
+                <div class="input-group">
+                    <label for="{{ form.title.id_for_label }}" class="input-label">
+                        {{ form.title.label }} <span style="color: #EF4444;">*</span>
+                    </label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                    <span class="input-error">{{ form.title.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Quiz Description -->
+                <div class="input-group">
+                    <label for="{{ form.description.id_for_label }}" class="input-label">
+                        {{ form.description.label }}
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                    <span class="input-error">{{ form.description.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Course Selection -->
+                <div class="input-group">
+                    <label for="{{ form.course.id_for_label }}" class="input-label">
+                        {{ form.course.label }}
+                    </label>
+                    {{ form.course }}
+                    {% if form.course.errors %}
+                    <span class="input-error">{{ form.course.errors.0 }}</span>
+                    {% endif %}
+                    <p class="input-hint">Select the course this quiz belongs to</p>
+                </div>
+
+                <div class="form-row">
+                    <!-- Pass Percentage -->
+                    <div class="input-group">
+                        <label for="{{ form.passing_score.id_for_label }}" class="input-label">
+                            {{ form.passing_score.label }}
+                        </label>
+                        {{ form.passing_score }}
+                        {% if form.passing_score.errors %}
+                        <span class="input-error">{{ form.passing_score.errors.0 }}</span>
+                        {% endif %}
+                        <p class="input-hint">Minimum score to pass (%)</p>
+                    </div>
+
+                    <!-- Time Limit -->
+                    <div class="input-group">
+                        <label for="{{ form.time_limit_minutes.id_for_label }}" class="input-label">
+                            {{ form.time_limit_minutes.label }}
+                        </label>
+                        {{ form.time_limit_minutes }}
+                        {% if form.time_limit_minutes.errors %}
+                        <span class="input-error">{{ form.time_limit_minutes.errors.0 }}</span>
+                        {% endif %}
+                        <p class="input-hint">Time limit in minutes</p>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        {{ submit_text }}
+                    </button>
+                    <a href="{% url 'quizzes:list' %}" class="btn btn-outline btn-lg">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+
+            <!-- Questions List (if editing) -->
+            {% if quiz %}
+            <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid rgba(0,0,0,0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="font-size: 1.5rem; font-weight: 700;">Questions</h2>
+                    <a href="{% url 'quizzes:create_question' quiz.id %}" class="btn btn-secondary">
+                        ➕ Add Question
+                    </a>
+                </div>
+
+                {% if questions %}
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    {% for question in questions %}
+                    <div class="card" style="padding: 1.25rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="flex: 1;">
+                                <p style="font-weight: 600; margin-bottom: 0.5rem;">{{ forloop.counter }}. {{ question.text }}</p>
+                                <p style="font-size: 0.875rem; color: #6B7280;">{{ question.answers.count }} answer(s)
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a href="{% url 'quizzes:edit_question' question.id %}" class="btn btn-sm"
+                                    style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                                    ✏️ Edit
+                                </a>
+                                <a href="{% url 'quizzes:delete_question' question.id %}" class="btn btn-sm btn-danger"
+                                    style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                                    🗑️ Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p style="text-align: center; color: #6B7280; padding: 2rem;">No questions yet. Add your first question!
+                </p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-page {
+        animation: fadeIn 0.5s ease;
+    }
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete {{ object_type }} - Sex Education System{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 3rem 0;">
+    <div class="form-page">
+        <!-- Confirm Delete Card -->
+        <div class="card" style="max-width: 600px; margin: 0 auto; text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">⚠️</div>
+
+            <h1 style="font-size: 2rem; margin-bottom: 1rem; color: #EF4444;">
+                {{ submit_text|default:"Confirm Delete" }}
+            </h1>
+
+            <p style="font-size: 1.125rem; color: #6B7280; margin-bottom: 2rem;">
+                Are you sure you want to process <strong>{{ object }}</strong>?
+                <br>
+                <span {% if warning_text %}style="color: #DC2626; font-weight: 700;" {% endif %}>
+                    {{ warning_text|default:"This action cannot be undone." }}
+                </span>
+            </p>
+
+            <form method="post" style="display: inline;">
+                {% csrf_token %}
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <button type="submit" class="btn btn-danger btn-lg">
+                        {{ submit_text|default:"Delete Item" }}
+                    </button>
+                    <a href="{{ cancel_url }}" class="btn btn-outline btn-lg">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-page {
+        animation: fadeIn 0.5s ease;
+    }
+</style>
+{% endblock %}

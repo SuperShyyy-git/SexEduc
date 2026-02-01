@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Sex Education System{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 3rem 0;">
+    <div class="form-page">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" style="margin-bottom: 2rem; font-size: 0.875rem; color: #6B7280;">
+            <a href="{% url 'home' %}" style="color: #6366F1;">Home</a>
+            <span style="margin: 0 0.5rem;">/</span>
+            <a href="{% url 'courses:list' %}" style="color: #6366F1;">Courses</a>
+            <span style="margin: 0 0.5rem;">/</span>
+            <span>{{ title }}</span>
+        </nav>
+
+        <!-- Form Card -->
+        <div class="card" style="max-width: 800px; margin: 0 auto;">
+            <div class="form-header">
+                <h1 class="form-title">{{ title }}</h1>
+                {% if course %}
+                <p class="form-description">Make changes to your course and save when ready.</p>
+                {% else %}
+                <p class="form-description">Fill in the details below to create a new course.</p>
+                {% endif %}
+            </div>
+
+            <form method="post" enctype="multipart/form-data" class="form-body">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-error"
+                    style="margin-bottom: 1.5rem; padding: 1rem; background: #FEE2E2; border: 1px solid #F87171; border-radius: 0.5rem; color: #991B1B;">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- Course Title -->
+                <div class="input-group">
+                    <label for="{{ form.title.id_for_label }}" class="input-label">
+                        {{ form.title.label }} <span style="color: #EF4444;">*</span>
+                    </label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                    <span class="input-error">{{ form.title.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Course Description -->
+                <div class="input-group">
+                    <label for="{{ form.description.id_for_label }}" class="input-label">
+                        {{ form.description.label }} <span style="color: #EF4444;">*</span>
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                    <span class="input-error">{{ form.description.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-row">
+                    <!-- Difficulty Level -->
+                    <div class="input-group">
+                        <label for="{{ form.difficulty.id_for_label }}" class="input-label">
+                            {{ form.difficulty.label }}
+                        </label>
+                        {{ form.difficulty }}
+                        {% if form.difficulty.errors %}
+                        <span class="input-error">{{ form.difficulty.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Published Status -->
+                    <div class="input-group" style="display: flex; align-items: center; gap: 0.75rem;">
+                        {{ form.is_published }}
+                        <label for="{{ form.is_published.id_for_label }}" class="input-label" style="margin: 0;">
+                            {{ form.is_published.label }}
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Course Image -->
+                <div class="input-group">
+                    <label for="{{ form.image.id_for_label }}" class="input-label">
+                        {{ form.image.label }}
+                    </label>
+                    {% if course and course.image %}
+                    <div style="margin-bottom: 1rem;">
+                        <img src="{{ course.image.url }}" alt="{{ course.title }}"
+                            style="max-width: 300px; border-radius: 0.75rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <p style="font-size: 0.875rem; color: #6B7280; margin-top: 0.5rem;">Current image</p>
+                    </div>
+                    {% endif %}
+                    {{ form.image }}
+                    {% if form.image.errors %}
+                    <span class="input-error">{{ form.image.errors.0 }}</span>
+                    {% endif %}
+                    <p class="input-hint">Upload a course thumbnail image (JPG, PNG, max 5MB)</p>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        {{ submit_text }}
+                    </button>
+                    {% if course %}
+                    <a href="{% url 'courses:detail' course.id %}" class="btn btn-outline btn-lg">
+                        Cancel
+                    </a>
+                    {% else %}
+                    <a href="{% url 'courses:list' %}" class="btn btn-outline btn-lg">
+                        Cancel
+                    </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-page {
+        animation: fadeIn 0.5s ease;
+    }
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .alert-error {
+        animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-10px);
+        }
+
+        75% {
+            transform: translateX(10px);
+        }
+    }
+</style>
+{% endblock %}

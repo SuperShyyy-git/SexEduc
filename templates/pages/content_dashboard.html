@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block title %}Content Management Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1>Content Management Dashboard</h1>
+                <p>Overview of system content and statistics</p>
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'courses:create' %}" class="btn btn-primary">+ Add Course</a>
+                <a href="{% url 'courses:create_lesson' %}" class="btn btn-success">+ Add Lesson</a>
+                <a href="{% url 'quizzes:create' %}" class="btn btn-secondary">+ Add Quiz</a>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-number">{{ total_users }}</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-number">{{ total_courses }}</div>
+                <div class="stat-label">Courses</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📖</div>
+                <div class="stat-number">{{ total_lessons }}</div>
+                <div class="stat-label">Lessons</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📝</div>
+                <div class="stat-number">{{ total_quizzes }}</div>
+                <div class="stat-label">Quizzes</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">❓</div>
+                <div class="stat-number">{{ total_questions }}</div>
+                <div class="stat-label">Questions</div>
+            </div>
+        </div>
+
+        <div class="management-sections">
+
+            <div class="section">
+                <h2>Recent Users</h2>
+                <div class="user-list">
+                    {% for user in recent_users %}
+                    <div class="user-item">
+                        <div>
+                            <strong>{{ user.get_full_name|default:user.username }}</strong>
+                            <p style="color: #6c757d; font-size: 0.875rem;">Joined: {{ user.date_joined|date:"F d, Y" }}
+                            </p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Recent Courses</h2>
+                <div class="course-list">
+                    {% for course in recent_courses %}
+                    <div class="course-item">
+                        <div>
+                            <strong>{{ course.title }}</strong>
+                            <p style="color: #6c757d; font-size: 0.875rem;">{{ course.lesson_count }} lessons</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="{% url 'courses:create_lesson_for_course' course.id %}" class="btn btn-success">+
+                                Lesson</a>
+                            <a href="{% url 'courses:edit' course.id %}" class="btn btn-secondary">Edit</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .dashboard-page {
+        padding: 2rem 0;
+        background: #f8f9fa;
+        min-height: 80vh;
+    }
+
+    .dashboard-page h1 {
+        margin-bottom: 0.5rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #667eea;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+
+    .management-sections {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .section {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .section h2 {
+        margin-bottom: 1.5rem;
+        color: #333;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .user-list,
+    .course-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .user-item,
+    .course-item {
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+</style>
+{% endblock %}

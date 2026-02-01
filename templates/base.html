@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Comprehensive sex education platform providing accurate, age-appropriate information on sexual health, relationships, and wellness.">
+    <meta name="keywords" content="sex education, sexual health, relationships, wellness, education">
+    <title>{% block title %}Sex Education System{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Global Styles -->
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{% static 'css/atoms/buttons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/atoms/inputs.css' %}">
+    <link rel="stylesheet" href="{% static 'css/molecules/forms.css' %}">
+    <link rel="stylesheet" href="{% static 'css/molecules/cards.css' %}">
+    <link rel="stylesheet" href="{% static 'css/organisms/header.css?v=2' %}">
+    <link rel="stylesheet" href="{% static 'css/organisms/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/organisms/navigation.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+    <!-- Header -->
+    {% include 'organisms/header.html' %}
+
+    <!-- Navigation -->
+    {% include 'organisms/navigation.html' %}
+
+    <!-- Main Content -->
+    <main class="content" id="main-content" role="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% include 'organisms/footer.html' %}
+
+    <!-- JavaScript Files -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

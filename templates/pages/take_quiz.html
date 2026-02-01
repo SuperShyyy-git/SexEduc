@@ -1,0 +1,389 @@
+{% extends 'base.html' %}
+
+{% block title %}Taking {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="take-quiz-page">
+    <div class="container">
+        <!-- Progress Header -->
+        <div class="quiz-progress-header  card">
+            <div class="progress-info">
+                <h1>{{ quiz.title }}</h1>
+                <div class="progress-bar-wrapper">
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text">
+                        <span id="currentQuestion">0</span> of <span id="totalQuestions">{{ questions_count }}</span> questions
+                    </span>
+                </div>
+            </div>
+            <div class="quiz-timer" id="timer">
+                <div class="timer-icon">⏱️</div>
+                <span class="timer-text">Time Remaining: {{ quiz.time_limit_minutes }}:00</span>
+            </div>
+        </div>
+
+        <form method="post" action="{% url 'quizzes:submit' quiz.id %}" id="quizForm">
+            {% csrf_token %}
+
+            {% for question in questions %}
+            <div class="question-card card hover-lift" data-question-index="{{ forloop.counter }}">
+                <div class="question-header">
+                    <span class="question-number">Question {{ forloop.counter }}</span>
+                    <span class="question-badge">{{ forloop.counter }} / {{ questions_count }}</span>
+                </div>
+                <h3 class="question-text">{{ question.text }}</h3>
+
+                <div class="answers-list">
+                    {% for answer in question.answers.all %}
+                    <label class="answer-option">
+                        <input type="radio" name="question_{{ question.id }}" value="{{ answer.id }}" required>
+                        <span class="answer-radio"></span>
+                        <span class="answer-text">{{ answer.text }}</span>
+                        <span class="answer-check">✓</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="submit-section card">
+                <div class="submit-content">
+                    <h3>Ready to Submit?</h3>
+                    <p>Make sure you've answered all questions before submitting.</p>
+                </div>
+                <div class="submit-actions">
+                    <a href="{% url 'quizzes:detail' quiz.id %}" class="btn btn-outline btn-lg">Cancel</a>
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <span>✓</span> Submit Quiz
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .take-quiz-page {
+        padding: 2rem 0 4rem;
+        background: var(--gray-50);
+        min-height: 100vh;
+    }
+
+    .quiz-progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 2rem;
+        margin-bottom: 2rem;
+        gap: 2rem;
+        flex-wrap: wrap;
+        background: white;
+        border-radius: 1rem;
+    }
+
+    .progress-info {
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .progress-info h1 {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+        color: var(--gray-900);
+    }
+
+    .progress-bar-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .progress-bar {
+        flex: 1;
+        height: 8px;
+        background: var(--gray-200);
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: var(--primary-gradient);
+        transition: width 400ms ease;
+        border-radius: 1rem;
+    }
+
+    .progress-text {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--gray-600);
+        white-space: nowrap;
+    }
+
+    .quiz-timer {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.5rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border-radius: 2rem;
+        font-weight: 600;
+        font-size: 1.125rem;
+    }
+
+    .timer-icon {
+        font-size: 1.5rem;
+    }
+
+    .question-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        margin-bottom: 1.5rem;
+        border: 2px solid transparent;
+        transition: all 300ms ease;
+    }
+
+    .question-card.answered {
+        border-color: var(--success-color);
+    }
+
+    .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .question-number {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 0.5rem 1.25rem;
+        border-radius: 2rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .question-badge {
+        font-size: 0.875rem;
+        color: var(--gray-500);
+        font-weight: 600;
+    }
+
+    .question-text {
+        font-size: 1.375rem;
+        line-height: 1.6;
+        color: var(--gray-900);
+        margin-bottom: 1.5rem;
+    }
+
+    .answers-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .answer-option {
+        display: flex;
+        align-items: center;
+        padding: 1.25rem;
+        background: var(--gray-50);
+        border: 2px solid var(--gray-200);
+        border-radius: 0.75rem;
+        cursor: pointer;
+        transition: all 200ms ease;
+        position: relative;
+        min-height: 60px;
+    }
+
+    .answer-option:hover {
+        border-color: var(--primary-color);
+        background: rgba(99, 102, 241, 0.05);
+    }
+
+    .answer-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .answer-radio {
+        width: 24px;
+        height: 24px;
+        border: 2px solid var(--gray-400);
+        border-radius: 50%;
+        margin-right: 1rem;
+        flex-shrink: 0;
+        transition: all 200ms ease;
+        position: relative;
+    }
+
+    .answer-option:hover .answer-radio {
+        border-color: var(--primary-color);
+    }
+
+    .answer-option input[type="radio"]:checked ~ .answer-radio {
+        border-color: var(--primary-color);
+        background: var(--primary-gradient);
+    }
+
+    .answer-option input[type="radio"]:checked ~ .answer-radio::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 8px;
+        height: 8px;
+        background: white;
+        border-radius: 50%;
+    }
+
+    .answer-text {
+        flex: 1;
+        font-size: 1.0625rem;
+        font-weight: 500;
+        color: var(--gray-700);
+    }
+
+    .answer-option input[type="radio"]:checked ~ .answer-text {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .answer-check {
+        color: var(--success-color);
+        font-size: 1.5rem;
+        opacity: 0;
+        transition: opacity 200ms ease;
+    }
+
+    .answer-option input[type="radio"]:checked ~ .answer-check {
+        opacity: 1;
+    }
+
+    .submit-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        margin-top: 2rem;
+        text-align: center;
+    }
+
+    .submit-content {
+        margin-bottom: 2rem;
+    }
+
+    .submit-content h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--gray-900);
+    }
+
+    .submit-content p {
+        color: var(--gray-600);
+        margin-bottom: 0;
+    }
+
+    .submit-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+        .quiz-progress-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .progress-bar-wrapper {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .quiz-timer {
+            justify-content: center;
+        }
+
+        .question-text {
+            font-size: 1.125rem;
+        }
+
+        .submit-actions {
+            flex-direction: column;
+        }
+
+        .submit-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+{{ quiz.time_limit_minutes|json_script:"quiz-time-limit" }}
+{{ questions_count|json_script:"questions-count" }}
+
+<script>
+    // Timer functionality
+    const timeLimitMinutes = JSON.parse(document.getElementById('quiz-time-limit').textContent);
+    const questionsCount = JSON.parse(document.getElementById('questions-count').textContent);
+    let timeLimit = timeLimitMinutes * 60; // Convert to seconds
+    const timerElement = document.getElementById('timer');
+    const quizForm = document.getElementById('quizForm');
+
+    const countdown = setInterval(function () {
+        const minutes = Math.floor(timeLimit / 60);
+        const seconds = timeLimit % 60;
+        timerElement.querySelector('.timer-text').textContent = `Time Remaining: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+        // Change timer color when time is running low
+        if (timeLimit <= 60) {
+            timerElement.style.background = 'linear-gradient(135deg, #EF4444, #DC2626)';
+        } else if (timeLimit <= 300) {
+            timerElement.style.background = 'linear-gradient(135deg, #F59E0B, #D97706)';
+        }
+
+        if (timeLimit <= 0) {
+            clearInterval(countdown);
+            alert('Time is up! Submitting your quiz...');
+            quizForm.submit();
+        }
+        timeLimit--;
+    }, 1000);
+
+    // Progress tracking
+    const questionCards = document.querySelectorAll('.question-card');
+    const progressFill = document.querySelector('.progress-fill');
+    const currentQuestionElement = document.getElementById('currentQuestion');
+
+    function updateProgress() {
+        const answeredCount = document.querySelectorAll('input[type="radio"]:checked').length;
+        const progress = (answeredCount / questionsCount) * 100;
+        progressFill.style.width = `${progress}%`;
+        currentQuestionElement.textContent = answeredCount;
+
+        // Mark cards as answered
+        questionCards.forEach(card => {
+            const radios = card.querySelectorAll('input[type="radio"]');
+            const isAnswered = Array.from(radios).some(radio => radio.checked);
+            if (isAnswered) {
+                card.classList.add('answered');
+            } else {
+                card.classList.remove('answered');
+            }
+        });
+    }
+
+    // Listen for changes on all radio buttons
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', updateProgress);
+    });
+
+    // Initial update
+    updateProgress();
+</script>
+{% endblock %}

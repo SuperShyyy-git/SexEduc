@@ -1,0 +1,78 @@
+<nav class="navigation" role="navigation">
+    <div class="nav-container">
+        <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+            <span class="hamburger"></span>
+        </button>
+
+        <ul class="nav-menu" id="navMenu">
+            <li class="nav-item">
+                <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                    <span class="nav-icon">🏠</span>
+                    <span>Home</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'courses:list' %}" class="nav-link {% if 'courses' in request.path %}active{% endif %}">
+                    <span class="nav-icon">📚</span>
+                    <span>Courses</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'quizzes:list' %}" class="nav-link {% if 'quizzes' in request.path %}active{% endif %}">
+                    <span class="nav-icon">📝</span>
+                    <span>Quizzes</span>
+                </a>
+            </li>
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a href="{% url 'accounts:dashboard' %}" class="nav-link {% if 'dashboard' in request.path %}active{% endif %}">
+                    <span class="nav-icon">📊</span>
+                    <span>My Progress</span>
+                </a>
+            </li>
+            {% endif %}
+            {% if user.is_staff %}
+            <li class="nav-item">
+                <a href="{% url 'content_management:dashboard' %}"
+                    class="nav-link {% if 'content_management' in request.path %}active{% endif %}">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+
+<script>
+    // Mobile navigation toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const navToggle = document.querySelector('.nav-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        if (navToggle) {
+            navToggle.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+                const isExpanded = navMenu.classList.contains('active');
+                navToggle.setAttribute('aria-expanded', isExpanded);
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function(event) {
+                const isClickInside = navToggle.contains(event.target) || navMenu.contains(event.target);
+                if (!isClickInside && navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    navToggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // Close menu when clicking a link
+            navMenu.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    navMenu.classList.remove('active');
+                    navToggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+        }
+    });
+</script>
