@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
-from decouple import config
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,12 +22,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-bv$!i^530&5vf-8@*z7_#y=_n1)ri3l^4d*)&%&3%@fc&h-wbh')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-bv$!i^530&5vf-8@*z7_#y=_n1)ri3l^4d*)&%&3%@fc&h-wbh')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+# ALLOWED_HOSTS - handle both Render and local development
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
+# Add Render domain if RENDER environment variable is set
+if os.environ.get('RENDER'):
+    ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_HOSTNAME', ''))
 
 
 # Application definition
@@ -83,10 +87,11 @@ WSGI_APPLICATION = 'sex_education_system.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 # Use PostgreSQL in production, SQLite for local development
-if config('DATABASE_URL', default=None):
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(
-            default=config('DATABASE_URL'),
+            default=DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
         )
@@ -157,7 +162,7 @@ LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'accounts:dashboard'
 LOGOUT_REDIRECT_URL = 'home'
 
-# Security Settings (for production)
+# Security Settings (only enable in production)
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
