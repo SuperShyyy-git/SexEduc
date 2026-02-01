@@ -1,43 +1,209 @@
+{% load static %}
 <footer class="footer">
     <div class="footer-container">
         <div class="footer-grid">
-            <div class="footer-section">
-                <h4>About</h4>
-                <p>Comprehensive sex education platform providing accurate, age-appropriate information.</p>
+            <!-- About Section -->
+            <div class="footer-column footer-about">
+                <div class="footer-logo">
+                    <span class="footer-logo-icon">🎓</span>
+                    <span class="footer-logo-text">Sex Education System</span>
+                </div>
+                <p class="footer-description">
+                    Comprehensive sex education platform providing accurate, age-appropriate information in a safe learning environment.
+                </p>
             </div>
 
-            <div class="footer-section">
-                <h4>Quick Links</h4>
+            <!-- Quick Links -->
+            <div class="footer-column">
+                <h3 class="footer-heading">Quick Links</h3>
                 <ul class="footer-links">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="{% url 'courses:list' %}">Courses</a></li>
-                    <li><a href="{% url 'quizzes:list' %}">Quizzes</a></li>
-                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/">🏠 Home</a></li>
+                    <li><a href="{% url 'courses:list' %}">📚 Courses</a></li>
+                    <li><a href="{% url 'quizzes:list' %}">📝 Quizzes</a></li>
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'accounts:dashboard' %}">📊 Dashboard</a></li>
+                    {% endif %}
                 </ul>
             </div>
 
-            <div class="footer-section">
-                <h4>Support</h4>
+            <!-- Support -->
+            <div class="footer-column">
+                <h3 class="footer-heading">Support</h3>
                 <ul class="footer-links">
-                    <li><a href="/contact">Contact</a></li>
-                    <li><a href="/privacy">Privacy Policy</a></li>
-                    <li><a href="/terms">Terms of Service</a></li>
-                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="#">📧 Contact Us</a></li>
+                    <li><a href="#">🔒 Privacy Policy</a></li>
+                    <li><a href="#">📄 Terms of Service</a></li>
+                    <li><a href="#">❓ FAQ</a></li>
                 </ul>
             </div>
 
-            <div class="footer-section">
-                <h4>Resources</h4>
+            <!-- Resources -->
+            <div class="footer-column">
+                <h3 class="footer-heading">Resources</h3>
                 <ul class="footer-links">
-                    <li><a href="/resources">Educational Resources</a></li>
-                    <li><a href="/help">Help Center</a></li>
-                    <li><a href="/community">Community Guidelines</a></li>
+                    <li><a href="#">📖 Educational Resources</a></li>
+                    <li><a href="#">💬 Help Center</a></li>
+                    <li><a href="#">👥 Community Guidelines</a></li>
+                    {% if user.is_staff %}
+                    <li><a href="/admin">⚙️ Admin Panel</a></li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
 
+        <!-- Bottom Bar -->
         <div class="footer-bottom">
-            <p>&copy; 2026 Sex Education System. All rights reserved.</p>
+            <p class="footer-copyright">
+                © {{ current_year|default:"2026" }} Sex Education System. All rights reserved.
+            </p>
+            <p class="footer-tagline">
+                Empowering through education 💜
+            </p>
         </div>
     </div>
 </footer>
+
+<style>
+    .footer {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-top: 3px solid var(--primary-color, #6366F1);
+        margin-top: 4rem;
+        padding: 3rem 0 1.5rem;
+    }
+
+    .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 3rem;
+        margin-bottom: 2.5rem;
+    }
+
+    /* About Section */
+    .footer-about {
+        padding-right: 2rem;
+    }
+
+    .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .footer-logo-icon {
+        font-size: 2rem;
+    }
+
+    .footer-logo-text {
+        font-size: 1.25rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #6366F1, #8B5CF6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .footer-description {
+        color: #6b7280;
+        line-height: 1.6;
+        font-size: 0.9375rem;
+    }
+
+    /* Footer Columns */
+    .footer-column {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .footer-heading {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 1.25rem;
+    }
+
+    .footer-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .footer-links li a {
+        color: #6b7280;
+        text-decoration: none;
+        font-size: 0.9375rem;
+        transition: all 200ms ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .footer-links li a:hover {
+        color: #6366F1;
+        transform: translateX(4px);
+    }
+
+    /* Bottom Bar */
+    .footer-bottom {
+        border-top: 1px solid #d1d5db;
+        padding-top: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .footer-copyright,
+    .footer-tagline {
+        color: #6b7280;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    .footer-tagline {
+        font-weight: 500;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .footer-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .footer-about {
+            grid-column: 1 / -1;
+            padding-right: 0;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .footer {
+            padding: 2rem 0 1rem;
+        }
+
+        .footer-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .footer-bottom {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .footer-links li a:hover {
+            transform: none;
+        }
+    }
+</style>
